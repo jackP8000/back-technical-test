@@ -47,7 +47,7 @@ class Order
     /**
      * @ORM\Column(type="integer", nullable=true)
      */
-    private int $total;
+    private ?int $total;
 
     /**
      * @ORM\OneToMany(targetEntity="OrderLine", mappedBy="order")
