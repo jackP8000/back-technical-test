@@ -81,7 +81,7 @@ class OrderLine
         return $this;
     }
 
-    public function getProduct()
+    public function getProduct(): Product
     {
         return $this->product;
     }

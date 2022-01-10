@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\OrderRepository;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -12,6 +13,12 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Order
 {
+    const HEAVY_LIMIT = 40000;
+    const SUPER_HEAVY_LIMIT = 60000;
+    const HEAVY_TAG = 'heavy';
+    const FOREIGN_ORDER_TAG = 'foreignWarehouse';
+    const ISSUES_TAG = 'hasIssues';
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -53,6 +60,16 @@ class Order
      * @ORM\OneToMany(targetEntity="OrderLine", mappedBy="order")
      */
     private $lines;
+
+    /**
+     * @ORM\Column(type="array", nullable=true)
+     */
+    private $tags = [];
+
+    /**
+     * @ORM\OneToOne(targetEntity=Issues::class, cascade={"persist", "remove"})
+     */
+    private $issues;
 
     public function __construct()
     {
@@ -132,8 +149,44 @@ class Order
     /**
      * @return ArrayCollection
      */
-    public function getLines(): ArrayCollection
+    public function getLines(): Collection
     {
         return $this->lines;
+    }
+
+    public function getTags(): ?array
+    {
+        return $this->tags;
+    }
+
+    public function setTags(?array $tags): self
+    {
+        $this->tags = $tags;
+
+        return $this;
+    }
+
+    public function addTag(string $tag)
+    {
+        if(is_null($this->tags)){
+            $this->tags = [];
+        }
+
+        if(!in_array($tag, $this->tags))
+        {
+            $this->tags[] = $tag;
+        }
+    }
+
+    public function getIssues(): ?Issues
+    {
+        return $this->issues;
+    }
+
+    public function setIssues(?Issues $issues): self
+    {
+        $this->issues = $issues;
+
+        return $this;
     }
 }
